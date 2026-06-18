@@ -122,8 +122,11 @@ class TestConfigLoading:
                 assert 'technical' in cfg[state]
                 assert 'fundamental' in cfg[state]
                 assert 'industry' in cfg[state]
+                # v4.0: 支持3维或4维权重
                 total = cfg[state]['technical'] + cfg[state]['fundamental'] + cfg[state]['industry']
-                assert abs(total - 1.0) < 0.001
+                if 'momentum' in cfg[state]:
+                    total += cfg[state]['momentum']
+                assert abs(total - 1.0) < 0.001, f"{state} 权重总和={total} != 1.0"
         else:
             pytest.skip("weights.json 不存在，跳过")
 
@@ -172,6 +175,130 @@ class TestSectorStocks:
         all_codes = [code for stocks in SECTOR_STOCKS.values() for _, code in stocks]
         for h in holding:
             assert h in all_codes, f"持仓股票 {h} 未在任何赛道中找到"
+
+
+# ── Test: factor_library.py (v4.0 新增) ───────────────────
+class TestFactorLibrary:
+    def test_rsi_normal_range(self):
+        from factor_library import compute_rsi
+        # 稳定上涨序列 → RSI 应接近100
+        closes = [100 + i * 0.5 for i in range(30)]
+        rsi = compute_rsi(closes)
+        assert rsi is not None
+        assert rsi > 70  # 强势
+
+    def test_rsi_insufficient_data(self):
+        from factor_library import compute_rsi
+        assert compute_rsi([1, 2, 3]) is None
+
+    def test_kdj_normal(self):
+        from factor_library import compute_kdj
+        highs = [10 + i * 0.1 for i in range(20)]
+        lows = [9 + i * 0.1 for i in range(20)]
+        closes = [9.5 + i * 0.1 for i in range(20)]
+        k, d, j = compute_kdj(highs, lows, closes)
+        assert k is not None and d is not None and j is not None
+        assert 0 <= k <= 100
+
+    def test_macd_normal(self):
+        from factor_library import compute_macd
+        closes = [100 + i * 0.3 for i in range(50)]
+        dif, dea, bar = compute_macd(closes)
+        assert dif is not None
+        assert dea is not None
+        assert bar is not None
+
+    def test_bollinger_normal(self):
+        from factor_library import compute_bollinger
+        closes = [100 + (i % 5 - 2) for i in range(30)]
+        upper, mid, lower, pctb = compute_bollinger(closes)
+        assert upper is not None
+        assert upper > mid > lower
+        assert 0 <= pctb <= 1
+
+    def test_atr_normal(self):
+        from factor_library import compute_atr
+        highs = [11 + i * 0.1 for i in range(30)]
+        lows = [9 + i * 0.1 for i in range(30)]
+        closes = [10 + i * 0.1 for i in range(30)]
+        atr = compute_atr(highs, lows, closes)
+        assert atr is not None
+        assert atr > 0
+
+    def test_momentum_score(self):
+        from factor_library import compute_momentum_score
+        closes = [100 + i * 0.2 for i in range(60)]
+        result = compute_momentum_score(closes)
+        assert 'momentum' in result
+        assert 0 <= result['momentum'] <= 100
+        assert 'rsi' in result
+        assert 'macd_score' in result
+
+
+# ── Test: risk_indicators.py (v4.0 新增) ──────────────────
+class TestRiskIndicators:
+    def test_max_drawdown_no_loss(self):
+        from risk_indicators import max_drawdown
+        curve = [100, 105, 110, 115, 120]
+        result = max_drawdown(curve)
+        assert result['max_dd'] == 0.0
+
+    def test_max_drawdown_with_loss(self):
+        from risk_indicators import max_drawdown
+        curve = [100, 110, 90, 95, 80]
+        result = max_drawdown(curve)
+        assert result['max_dd'] > 20  # 从110跌到80 ≈ 27%
+
+    def test_annualized_volatility(self):
+        from risk_indicators import annualized_volatility
+        returns = [0.01, -0.005, 0.008, -0.003, 0.012, -0.001, 0.005, -0.008, 0.003, 0.007,
+                   -0.002, 0.009, -0.006, 0.004, 0.011]
+        vol = annualized_volatility(returns)
+        assert vol > 0
+        assert vol < 100  # 合理范围
+
+    def test_sharpe_ratio_positive(self):
+        from risk_indicators import sharpe_ratio
+        # 稳定正收益
+        returns = [0.005] * 30
+        sr = sharpe_ratio(returns)
+        assert sr > 0
+
+    def test_sharpe_ratio_empty(self):
+        from risk_indicators import sharpe_ratio
+        assert sharpe_ratio([]) == 0
+
+    def test_trailing_stop_triggered(self):
+        from risk_indicators import trailing_stop_check
+        result = trailing_stop_check(90, 100, stop_pct=8.0)
+        assert result['triggered'] is True
+        assert result['action'] == '止损出局'
+
+    def test_trailing_stop_not_triggered(self):
+        from risk_indicators import trailing_stop_check
+        result = trailing_stop_check(105, 100, stop_pct=8.0)
+        assert result['triggered'] is False
+        assert result['action'] == '持有'
+
+    def test_risk_score_normal(self):
+        from risk_indicators import calculate_risk_score
+        closes = [100 + i * 0.1 + (i % 3 - 1) * 0.5 for i in range(60)]
+        result = calculate_risk_score(closes)
+        assert 'risk_score' in result
+        assert 0 <= result['risk_score'] <= 100
+        assert 'risk_level' in result
+
+    def test_risk_score_insufficient_data(self):
+        from risk_indicators import calculate_risk_score
+        result = calculate_risk_score([100, 101])
+        assert result['risk_score'] == 50
+
+    def test_format_risk_report(self):
+        from risk_indicators import format_risk_report
+        closes = [100 + i * 0.2 for i in range(60)]
+        report = format_risk_report(closes, '测试股票')
+        assert '风险评估' in report
+        assert '测试股票' in report
 
 
 if __name__ == '__main__':

@@ -1,5 +1,7 @@
 {
-  "bull": {"technical": 0.60, "fundamental": 0.25, "industry": 0.15},
-  "bear": {"technical": 0.25, "fundamental": 0.50, "industry": 0.25},
-  "mixed": {"technical": 0.40, "fundamental": 0.35, "industry": 0.25}
+  "bull": {"technical": 0.50, "fundamental": 0.20, "industry": 0.10, "momentum": 0.20},
+  "bear": {"technical": 0.20, "fundamental": 0.45, "industry": 0.20, "momentum": 0.15},
+  "mixed": {"technical": 0.30, "fundamental": 0.30, "industry": 0.20, "momentum": 0.20},
+  "_comment": "v4.0: 新增第四维度momentum（RSI/KDJ/MACD综合动量因子）",
+  "_author": "AtomCollide-智械工坊团队"
 }
