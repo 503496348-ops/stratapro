@@ -18,4 +18,4 @@ alert_logs/
 
 # 临时文件
 *.tmp
-*.log
+*.logdata/paper_account.json
