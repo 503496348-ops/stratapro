@@ -737,3 +737,8 @@ python3 -m pytest tests/ --cov=scripts --cov-report=term-missing
 
 *AtomCollide-智械工坊团队出品*
 
+## 播客投资信号层
+
+Stratapro 新增 `scripts/podcast_signal_extractor.py`：把公开播客/访谈逐字稿中的公司、指标、预测、风险、催化剂、情绪变化抽为带时间戳和原句的可审计信号。该能力用于补充技术面/基本面/产业渗透率之外的非结构化早期信息，不构成投资建议。
+
+验证：`python3 -m pytest tests/test_podcast_signal_extractor.py -v`

@@ -1,6 +1,6 @@
 ---
 name: Stratapro
-version: 3.1
+version: 4.1
 description: "AI智能选股与量化投资分析系统。三维评估·动态权重·日报推送·美股/港股/A股支持。当需要分析股票、生成投资报告、回测策略、查看市场行情时使用。"
 author: AtomCollide-智械工坊
 license: Apache-2.0
@@ -10,6 +10,9 @@ triggers:
   - 金融分析
   - stratapro
   - 深度方略
+  - 播客信号
+  - 投资情报
+  - 时间戳证据
 ---
 
 # AI智能选股评估系统 · SKILL.md
@@ -241,3 +244,25 @@ python scripts/v3_market_cycle_v2.py
 - [ ] 3. 执行核心功能
 - [ ] 4. 验证输出结果
 - [ ] 5. 反馈给用户
+
+## 播客投资信号层（v4.1）
+
+新增 `scripts/podcast_signal_extractor.py`，用于把公开播客、访谈、长音频逐字稿中的原始句子结构化为可审计投资信号。该模块只做证据整理，不提供买卖建议。
+
+### 字段模型
+
+每条 `PodcastSignal` 必须包含：
+
+- `entity`：公司、行业、资产或主题；
+- `category`：company / metric / forecast / risk / catalyst / sentiment_shift；
+- `claim`：可复核主张；
+- `timestamp_seconds`：音频证据时间戳；
+- `quote`：原句证据；
+- `source_episode`：来源节目；
+- `direction` / `ticker` / `confidence`：方向、标的、置信度。
+
+### 用法边界
+
+- 有时间戳、有原句、有来源，才算可验证信号。
+- 多节目重复提及的实体可用 `cluster_repeated_entities()` 聚合为早期趋势提示。
+- 输出必须保留“证据原句”，禁止把 AI 摘要当成原始证据。
