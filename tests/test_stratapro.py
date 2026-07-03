@@ -14,7 +14,7 @@ class TestSkillPaths:
     def test_get_skill_root(self):
         from skill_paths import get_skill_root
         root = get_skill_root()
-        assert root.endswith('stock-analysis')
+        assert os.path.basename(root) in {'stratapro', 'stock-analysis'}
         assert os.path.isdir(root)
     
     def test_get_diary_dir(self):

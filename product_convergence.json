@@ -1,0 +1,19 @@
+{
+  "repo": "stratapro",
+  "entrypoints": [],
+  "smoke_targets": [
+    "modules/agent_trading/agent_gateway.py",
+    "scripts/product_convergence_gate.py"
+  ],
+  "known_external_reference_files": [
+    "modules/agent_trading/agent_gateway.py",
+    "modules/agent_trading/opportunity_radar.py",
+    "modules/agent_trading/strategy_runtime.py",
+    "scripts/backtest_engine.py",
+    "scripts/exchange_adapters.py",
+    "scripts/mcp_server.py",
+    "scripts/product_convergence_gate.py",
+    "scripts/us_market_hedge.py"
+  ],
+  "policy": "External/fusion references are allowed only when explicitly reviewed here; new fusion work must add a smoke target or entrypoint wiring."
+}

@@ -266,3 +266,8 @@ python scripts/v3_market_cycle_v2.py
 - 有时间戳、有原句、有来源，才算可验证信号。
 - 多节目重复提及的实体可用 `cluster_repeated_entities()` 聚合为早期趋势提示。
 - 输出必须保留“证据原句”，禁止把 AI 摘要当成原始证据。
+
+## 2026-07-03 产品收敛门禁
+
+- 新增 `scripts/product_convergence_gate.py`：从远端干净 clone 后可运行 `python3 scripts/product_convergence_gate.py --json`，检查 SKILL/README、入口文件、smoke 目标、测试与外部融合引用是否自洽。
+- 新增 `tests/test_product_convergence_gate.py`：确保门禁在产品仓库中真实可执行，避免后续增强只停留在孤岛模块。
