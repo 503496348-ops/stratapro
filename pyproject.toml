@@ -6,6 +6,7 @@ build-backend = "setuptools.backends._legacy:_Backend"
 name = "stratapro"
 version = "0.1.0"
 description = "Strategic planning and decision framework"
+authors = [{name = "503496348-ops"}]
 readme = "README.md"
 license = "MIT"
 requires-python = ">=3.10"
@@ -20,3 +21,10 @@ addopts = "-q --tb=short"
 [tool.ruff]
 target-version = "py310"
 line-length = 120
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0",
+    "ruff>=0.1.0",
+    "mypy>=1.0",
+]
