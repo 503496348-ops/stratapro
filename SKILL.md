@@ -1,6 +1,10 @@
 ---
 name: stratapro
 description: "量化投资工具 — 市场报告、技术因子、模拟交易、回测引擎"
+license: MIT
+metadata:
+  author: 503496348-ops
+  version: 1.0.0
 triggers:
   - "量化"
   - "股票"
