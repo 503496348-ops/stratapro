@@ -1,0 +1,22 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.backends._legacy:_Backend"
+
+[project]
+name = "stratapro"
+version = "0.1.0"
+description = "Strategic planning and decision framework"
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.10"
+
+[project.scripts]
+stratapro = "scripts.cli:main"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q --tb=short"
+
+[tool.ruff]
+target-version = "py310"
+line-length = 120

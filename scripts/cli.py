@@ -3,13 +3,13 @@
 import argparse, json, sys, os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
-def cmd_report(args):
+def cmd_report(args) -> None:
     """Generate market report."""
     from scripts.market_report_v8 import detect_market_state, get_skill_root
     state = detect_market_state()
     print(json.dumps({"market_state": str(state)[:200], "status": "ok"}, ensure_ascii=False, indent=2))
 
-def cmd_factors(args):
+def cmd_factors(args) -> None:
     """Compute technical factors."""
     from scripts.factor_library import compute_rsi, compute_macd, compute_bollinger, compute_kdj
     print(json.dumps({
@@ -18,13 +18,13 @@ def cmd_factors(args):
         "status": "ok"
     }, ensure_ascii=False, indent=2))
 
-def cmd_backtest(args):
+def cmd_backtest(args) -> None:
     """Run backtest."""
     from scripts.backtest_engine import backtest, StrategyParams
     params = StrategyParams()
     print(json.dumps({"backtest": "initialized", "params": str(params)[:200], "status": "ok"}, ensure_ascii=False, indent=2))
 
-def cmd_trade(args):
+def cmd_trade(args) -> None:
     """Paper trading."""
     from scripts.paper_trading import PaperTradingEngine
     engine = PaperTradingEngine()
@@ -36,10 +36,10 @@ def cmd_trade(args):
         print(json.dumps({"action": "sell", "symbol": args.symbol, "status": "ok"}, ensure_ascii=False))
 
 
-def cmd_info(args):
+def cmd_info(args) -> None:
     """Show product info."""
     print(json.dumps({"product": "Stratapro", "type": "量化投资工具", "status": "ok"}, ensure_ascii=False, indent=2))
-def main():
+def main() -> None:
     p = argparse.ArgumentParser(description='Stratapro 量化投资工具')
     sub = p.add_subparsers(dest='command')
 
